@@ -65,12 +65,12 @@ pipeline {
         sh '''
           ls -al
           echo "Starting to build docker image for dev env"
-          docker build -t "$DOCKER_REGISTRY_NAME}/pick-color:dev-${BUILD_NUMBER}" -f docker/Dockerfile.no_build .
+          docker build -t "${DOCKER_REGISTRY_NAME}/pick-color:dev-${BUILD_NUMBER}" -f docker/Dockerfile.no_build .
         '''
         // Push image to hub.docker.com
         sh '''
           docker login -u ${DOCKER_REGISTRY_USERNAME} -p ${DOCKER_REGISTRY_PASSWORD} 
-          docker push "$DOCKER_REGISTRY_NAME}/pick-color:dev-${BUILD_NUMBER}"
+          docker push "${DOCKER_REGISTRY_NAME}/pick-color:dev-${BUILD_NUMBER}"
         '''
 
       }
@@ -95,12 +95,12 @@ pipeline {
         sh '''
           ls -al
           echo "Starting to build docker image, prepare for release"
-          docker build -t "$DOCKER_REGISTRY_NAME}/pick-color:${IMAGE_TAG}" -f docker/Dockerfile.no_build .
+          docker build -t "${DOCKER_REGISTRY_NAME}/pick-color:${IMAGE_TAG}" -f docker/Dockerfile.no_build .
         '''
         // Push image to hub.docker.com
         sh '''
           docker login -u ${DOCKER_REGISTRY_USERNAME} -p ${DOCKER_REGISTRY_PASSWORD} 
-          docker push "$DOCKER_REGISTRY_NAME}/pick-color:${IMAGE_TAG}"
+          docker push "${DOCKER_REGISTRY_NAME}/pick-color:${IMAGE_TAG}"
         '''
       }
     }
