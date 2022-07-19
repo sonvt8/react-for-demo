@@ -80,7 +80,6 @@ pipeline {
           ls -al
           echo "Starting to build docker image, prepare for release"
           docker build -t pick-color:v1-release -f docker/Dockerfile.no_build .
-          docker push 
         '''
       }
     }
