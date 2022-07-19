@@ -83,7 +83,7 @@ pipeline {
       }
       input {
         message "Enter release version..."
-        ok: "Done"
+        ok "Done"
         parameters {
           string(name: "IMAGE_TAG", defaultValue: "v0.0.0")
         }
