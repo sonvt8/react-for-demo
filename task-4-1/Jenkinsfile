@@ -26,7 +26,6 @@ pipeline {
         sh 'npm test'
         sh 'echo "Run unit test successfully."'
         sh 'ls -al'
-        sh 'echo $env.GIT_BRANCH'
       }
     }
 
