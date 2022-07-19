@@ -31,7 +31,7 @@ pipeline {
 
     stage ('Build') {
       when {
-        expression { return env.GIT_BRANCH == "origin/master" || env.GIT_BRANCH == "origin/release" }
+        expression { return env.GIT_BRANCH == "origin/develop" || env.GIT_BRANCH == "origin/release" }
       }
       steps {
         nodejs(nodeJSInstallationName: 'nodejs 8.9.4') {
