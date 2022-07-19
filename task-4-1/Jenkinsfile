@@ -46,7 +46,7 @@ pipeline {
       }
     }
 
-    stage ('Create docker images') {
+    stage ('Create docker images dev') {
       agent any
       when {
         branch 'develope'
@@ -63,7 +63,8 @@ pipeline {
         '''
       }
     }
-    stage ('Create docker images') {
+
+    stage ('Create docker images release') {
       agent any
       when {
         branch 'release'
