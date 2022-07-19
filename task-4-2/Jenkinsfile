@@ -1,6 +1,10 @@
 pipeline {
   agent { label 'linux-slave' }
-
+  environment {
+    DOCKER_REGISTRY_NAME        = credentials('DOCKER_REGISTRY_NAME')
+    DOCKER_REGISTRY_USERNAME    = credentials('DOCKER_REGISTRY_USERNAME')
+    DOCKER_REGISTRY_PASSWORD    = credentials('DOCKER_REGISTRY_PASSWORD')
+  }
   stages {
 
     stage ('Install dependencies') {
@@ -61,8 +65,14 @@ pipeline {
         sh '''
           ls -al
           echo "Starting to build docker image for dev env"
-          docker build -t pick-color:v1-dev -f docker/Dockerfile.no_build .
+          docker build -t "${DOCKER_REGISTRY_NAME}/pick-color:dev-${BUILD_NUMBER}" -f docker/Dockerfile.no_build .
         '''
+        // Push image to hub.docker.com
+        sh '''
+          echo ${DOCKER_REGISTRY_PASSWORD} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin  
+          docker push "${DOCKER_REGISTRY_NAME}/pick-color:dev-${BUILD_NUMBER}"
+        '''
+
       }
     }
 
@@ -71,6 +81,13 @@ pipeline {
       when {
         branch 'release'
       }
+      input {
+        message "Enter release version..."
+        ok "Done"
+        parameters {
+          string(name: "IMAGE_TAG", defaultValue: "v0.0.0")
+        }
+      }
       steps {
         script {
           unstash 'build'
@@ -78,7 +95,12 @@ pipeline {
         sh '''
           ls -al
           echo "Starting to build docker image, prepare for release"
-          docker build -t pick-color:v1-release -f docker/Dockerfile.no_build .
+          docker build -t "${DOCKER_REGISTRY_NAME}/pick-color:${IMAGE_TAG}" -f docker/Dockerfile.no_build .
+        '''
+        // Push image to hub.docker.com
+        sh '''
+          echo ${DOCKER_REGISTRY_PASSWORD} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin  
+          docker push "${DOCKER_REGISTRY_NAME}/pick-color:${IMAGE_TAG}"
         '''
       }
     }
