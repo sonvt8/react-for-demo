@@ -62,7 +62,6 @@ pipeline {
           ls -al
           echo "Starting to build docker image for dev env"
           docker build -t pick-color:v1-dev -f docker/Dockerfile.no_build .
-          docker push 
         '''
       }
     }
