@@ -154,22 +154,23 @@ pipeline {
       }
     }
 
-    // stage ('Deploy app - DEV/STG') {
-    //   input {
-    //     message 'Approve to deploy PRD?'
-    //     parameters {
-    //         booleanParam(name: 'APPROVED', defaultValue: false, description: 'Are you approve to deploy Application on PRD environment?')
-    //     }
-    //   }
-    //   when { 
-    //     tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
-    //   }
-    //   steps {
-    //     sh '''
-    //       docker stop color-app-dev || true && docker rm color-app-dev || true
-    //       docker run -p 30080:80 --restart always -d --name color-app-dev ${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}
-    //     '''
-    //   }
-    // }
+    stage ('Deploy app - DEV/STG') {
+      when { 
+        tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
+      }
+      input {
+        message 'Approve to deploy PRD?'
+        ok "Done"
+        parameters {
+            booleanParam(name: 'APPROVED', defaultValue: false, description: 'Are you approve to deploy Application on PRD environment?')
+        }
+      }
+      steps {
+        sh '''
+          docker stop color-app-prd || true && docker rm color-app-prd || true
+          docker run -p 30080:80 --restart always -d --name color-app-prd ${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}
+        '''
+      }
+    }
   }
 }
