@@ -131,50 +131,45 @@ pipeline {
       }
     }
     
-    // stage ('Create docker images - PRD') {
-    //   when { 
-    //     tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
-    //   }
-    //   input {
-    //     message 'Build Docker image'
-    //     parameters {
-    //         booleanParam(name: 'Approve Deploy Production', defaultValue: false, description: 'Are you approve to deploy Application on PRD environment?')
-    //     }
-    //   }
-    //   steps {
-    //     script {
-    //       unstash 'build'
-    //     }
-    //     sh '''
-    //       ls -al
-    //       echo "Starting to build docker image, prepare for release"
-    //       docker build -t "${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}" -f docker/Dockerfile.no_build .
-    //     '''
-    //     // Push image to hub.docker.com
-    //     // echo ${DOCKER_REGISTRY_PASSWORD} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin  
-    //     sh '''
-    //       docker login -u ${DOCKER_REGISTRY_USERNAME} --password ${DOCKER_REGISTRY_PASSWORD}
-    //       docker push "${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}"
-    //     '''
-    //   }
-    // }
+    stage ('Create docker images - PRD') {
+      when { 
+        tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
+      }
+      steps {
+        script {
+          unstash 'build'
+        }
 
-    // stage ('Deploy app - DEV/STG') {
-    //   when { 
-    //     tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
-    //   }
-    //   input {
-    //     message 'Approve to deploy PRD?'
-    //     parameters {
-    //         booleanParam(name: 'APPROVED', defaultValue: false, description: 'Are you approve to deploy Application on PRD environment?')
-    //     }
-    //   }
-    //   steps {
-    //     sh '''
-    //       docker stop color-app-dev || true && docker rm color-app-dev || true
-    //       docker run -p 30080:80 --restart always -d --name color-app-dev ${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}
-    //     '''
-    //   }
-    // }
+        // Create image step
+        sh '''
+          ls -al
+          echo "Starting to build docker image, prepare for release"
+          docker build -t "${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}" -f docker/Dockerfile.no_build .
+        '''
+        // Push image step
+        sh '''
+          docker login -u ${DOCKER_REGISTRY_USERNAME} --password ${DOCKER_REGISTRY_PASSWORD}
+          docker push "${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}"
+        '''
+      }
+    }
+
+    stage ('Deploy app - DEV/STG') {
+      input {
+        message 'Approve to deploy PRD?'
+        parameters {
+            booleanParam(name: 'APPROVED', defaultValue: false, description: 'Are you approve to deploy Application on PRD environment?')
+        }
+      }
+      when { 
+        tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
+      }
+      steps {
+        sh '''
+          docker stop color-app-dev || true && docker rm color-app-dev || true
+          docker run -p 30080:80 --restart always -d --name color-app-dev ${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}
+        '''
+      }
+    }
   }
 }
