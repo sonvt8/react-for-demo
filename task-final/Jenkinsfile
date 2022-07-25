@@ -15,10 +15,16 @@ pipeline {
         }
       }
       steps {
-        withSonarQubeEnv('sonar') {
-          sh './gradlew -Dsonar.host.url=${SONAR_HOST_URL} sonarqube'
+        script{
+          def scannerHome = tool 'sonar_scanner';
+            withSonarQubeEnv('sonar') {
+                sh "${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.projectKey=reactapp \
+                    -Dsonar.projectName=reactapp
+                    -Dsonar.host.url=${SONAR_HOST_URL}"
+            }
           }
-        }
+      }
     }
 
     stage("Quality gate") {
