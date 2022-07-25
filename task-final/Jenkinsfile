@@ -181,6 +181,6 @@ pipeline {
     //       docker run -p 30080:80 --restart always -d --name color-app-prd ${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}
     //     '''
     //   }
-    }
+    // }
   }
 }
