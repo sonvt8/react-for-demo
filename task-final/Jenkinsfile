@@ -15,7 +15,7 @@ pipeline {
         }
       }
       when {
-        tag "^v(\d+(\.\d+)*)$" 
+        tag "v*" 
       }
       steps {
         script{
