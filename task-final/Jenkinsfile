@@ -94,8 +94,9 @@ pipeline {
           docker build -t "${DOCKER_REGISTRY_NAME}/pick-color:dev-${BUILD_NUMBER}" -f docker/Dockerfile.no_build .
         '''
         // Push image to hub.docker.com
+        // echo ${DOCKER_REGISTRY_PASSWORD} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin  
         sh '''
-          echo ${DOCKER_REGISTRY_PASSWORD} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin  
+          docker login -u ${DOCKER_REGISTRY_USERNAME} --password ${DOCKER_REGISTRY_PASSWORD}
           docker push "${DOCKER_REGISTRY_NAME}/pick-color:dev-${BUILD_NUMBER}"
         '''
 
