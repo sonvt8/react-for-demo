@@ -16,8 +16,8 @@ pipeline {
       }
       steps {
         sh 'ls -al'
-        withSonarQubeEnv('sonarqube') {
-            sh '${tool("sonar")}/bin/sonar-scanner \
+        withSonarQubeEnv('sonar_scanner') {
+            sh '${tool("sonar_scanner")}/bin/sonar-scanner \
             -Dsonar.projectKey=color-app \
             -Dsonar.sources=. \
             -Dsonar.css.node=. \
