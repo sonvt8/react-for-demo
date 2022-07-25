@@ -6,56 +6,66 @@ pipeline {
     DOCKER_REGISTRY_PASSWORD    = credentials('DOCKER_REGISTRY_PASSWORD')
   }
   stages {
+    stage ('Integration Code') {
+      parallel {
+        stage ('Code Quality') {
+          stages {
+            stage('Code Quality Check') {
+              agent {
+                docker {
+                  image 'gradle:jdk8-alpine'
+                  label 'linux-slave'
+                }
+              }
 
-    stage('Code Quality Check') {
-      agent {
-        docker {
-          image 'gradle:jdk8-alpine'
-          label 'linux-slave'
-        }
-      }
-      steps {
-        script{
-          def scannerHome = tool 'sonar_scanner';
-            withSonarQubeEnv('sonar') {
-                sh "${scannerHome}/bin/sonar-scanner \
-                    -Dsonar.projectKey=color-app \
-                    -Dsonar.projectName=color-app \
-                    -Dsonar.host.url=${SONAR_HOST_URL}"
+              steps {
+                script{
+                  def scannerHome = tool 'sonar_scanner';
+                  withSonarQubeEnv('sonar') {
+                      sh "${scannerHome}/bin/sonar-scanner \
+                          -Dsonar.projectKey=color-app \
+                          -Dsonar.projectName=color-app \
+                          -Dsonar.host.url=${SONAR_HOST_URL}"
+                  }
+                }
+              }
+            }
+            stage("Quality gate") {
+              steps {
+                waitForQualityGate abortPipeline: true
+              }
             }
           }
-      }
-    }
+        }
 
-    stage("Quality gate") {
-      steps {
-        waitForQualityGate abortPipeline: true
-      }
-    }
-
-    stage ('Install Dependencies') {
-      tools {
-        nodejs 'nodejs 8.9.4'
-      }
-      steps {
-        sh '''
-          echo "Installing..."
-          npm install
-          echo "Install dependencies successfully."
-          ls -al
-        '''
-      }
-    }
-    
-    stage ('Test') {
-      tools {
-        nodejs 'nodejs 8.9.4'
-      }
-      steps {
-        sh 'echo "Run unit test..."'
-        sh 'npm test'
-        sh 'echo "Run unit test successfully."'
-        sh 'ls -al'
+        stage ('') {
+          stages {
+            stage ('Install Dependencies') {
+              tools {
+                nodejs 'nodejs 8.9.4'
+              }
+              steps {
+                sh '''
+                  echo "Installing..."
+                  npm install
+                  echo "Install dependencies successfully."
+                  ls -al
+                '''
+              }
+            }
+            stage ('Test') {
+              tools {
+                nodejs 'nodejs 8.9.4'
+              }
+              steps {
+                sh 'echo "Run unit test..."'
+                sh 'npm test'
+                sh 'echo "Run unit test successfully."'
+                sh 'ls -al'
+              }
+            }
+          }
+        }
       }
     }
 
@@ -162,6 +172,5 @@ pipeline {
         '''
       }
     }
-
   }
 }
