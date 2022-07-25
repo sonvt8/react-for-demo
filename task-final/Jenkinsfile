@@ -8,9 +8,16 @@ pipeline {
   stages {
 
     stage('Code Quality Check') {
+      agent {
+        docker {
+          image 'gradle:jdk8-alpine'
+          label 'linux-slave'
+        }
+      }
       steps {
+        sh 'ls -al'
         withSonarQubeEnv('sonar') {
-            sh '${tool("sonarqube")}/bin/sonar-scanner \
+            sh ' ./gradlew
             -Dsonar.projectKey=color-app \
             -Dsonar.sources=. \
             -Dsonar.host.url=${SONAR_HOST_URL}'
