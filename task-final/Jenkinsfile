@@ -9,13 +9,17 @@ pipeline {
 
     stage('Code Quality Check') {
       steps {
-          withSonarQubeEnv('sonar') {
-            sh '${tool("sonarqube")}/bin/sonar-scanner \
-            -Dsonar.projectKey=color-app \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=${SONAR_HOST_URL}'
-          }
+        withSonarQubeEnv('sonar') {
+          sh '${tool("sonarqube")}/bin/sonar-scanner \
+          -Dsonar.projectKey=color-app \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=${SONAR_HOST_URL}'
         }
+      }
+    }
+    stage("Quality gate") {
+      steps {
+        waitForQualityGate abortPipeline: true
       }
     }
 
