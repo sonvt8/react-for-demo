@@ -14,9 +14,7 @@ pipeline {
           label 'linux-slave'
         }
       }
-      when {
-        tag '^v(\d+(?:\.\d+)*)$'
-      }
+      when { tag pattern: "^v(\d+(?:\.\d+)*)$", comparator: "REGEXP"}
       steps {
         script{
           def scannerHome = tool 'sonar_scanner';
