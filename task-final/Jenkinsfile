@@ -17,13 +17,14 @@ pipeline {
       steps {
         sh 'ls -al'
         withSonarQubeEnv('sonar') {
-            sh ' ./gradlew
+            sh ' ./gradlew \
             -Dsonar.projectKey=color-app \
             -Dsonar.sources=. \
             -Dsonar.host.url=${SONAR_HOST_URL}'
           }
         }
     }
+
     stage("Quality gate") {
       steps {
         waitForQualityGate abortPipeline: true
