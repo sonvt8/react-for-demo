@@ -8,22 +8,22 @@ pipeline {
   stages {
 
     stage('Code Quality Check') {
-      // agent {
-      //   docker {
-      //     image 'gradle:jdk8-alpine'
-      //     label 'linux-slave'
-      //   }
-      // }
-      // steps {
-        def scannerHome = tool 'sonar_scanner';
+      agent {
+        docker {
+          image 'gradle:jdk8-alpine'
+          label 'linux-slave'
+        }
+      }
+      steps {
         withSonarQubeEnv('sonar') {
-            sh "${scannerHome}/bin/sonar-scanner \
-            -Dsonar.projectKey=color-app \
-            -Dsonar.sources=. \
-            -Dsonar.css.node=. \
-            -Dsonar.host.url=${SONAR_HOST_URL}"
+          sh './gradlew sonarqube'
+            // sh "${scannerHome}/bin/sonar-scanner \
+            // -Dsonar.projectKey=color-app \
+            // -Dsonar.sources=. \
+            // -Dsonar.css.node=. \
+            // -Dsonar.host.url=${SONAR_HOST_URL}"
           }
-        // }
+        }
     }
 
     stage("Quality gate") {
