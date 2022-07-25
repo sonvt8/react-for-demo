@@ -64,6 +64,7 @@ pipeline {
         anyOf {
             branch 'develop'
             branch 'release'
+            tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
         }
       }
       steps {
@@ -82,7 +83,6 @@ pipeline {
     stage ('Create docker images dev') {
       when {
         branch 'develop'
-        tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
       }
       steps {
         script {
@@ -108,7 +108,7 @@ pipeline {
       }
       steps {
         sh '''
-          docker rm -f color-app-dev
+          docker stop color-app-dev || true && docker rm color-app-dev || true
           docker run -p 30080:80 --restart always -d --name color-app-dev ${DOCKER_REGISTRY_NAME}/pick-color:dev-${BUILD_NUMBER} 
         '''
       }
@@ -138,6 +138,12 @@ pipeline {
     stage ('Create docker images - PRD') {
       when { 
         tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
+      }
+      input {
+        message 'Build Docker image'
+        parameters {
+            booleanParam(name: 'Approve Deploy Production', defaultValue: false, description: 'Are you approve to deploy Application on PRD environment?')
+        }
       }
       steps {
         script {
