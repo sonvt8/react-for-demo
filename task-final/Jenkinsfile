@@ -116,17 +116,26 @@ pipeline {
       }
     }
 
-    stage ('Deploy app - DEV/STG') {
+    stage ('Deploy app - DEV') {
       when {
-        anyOf {
-          branch 'develop'
-          branch 'release'
-        }
+        branch 'develop'
       }
       steps {
         sh '''
           docker stop color-app-dev || true && docker rm color-app-dev || true
           docker run -p 30080:80 --restart always -d --name color-app-dev ${DOCKER_REGISTRY_NAME}/pick-color:${BRANCH_NAME}-${BUILD_NUMBER} 
+        '''
+      }
+    }
+
+    stage ('Deploy app - STG') {
+      when {
+        branch 'release'
+      }
+      steps {
+        sh '''
+          docker stop color-app-stg || true && docker rm color-app-stg || true
+          docker run -p 30090:80 --restart always -d --name color-app-stg ${DOCKER_REGISTRY_NAME}/pick-color:${BRANCH_NAME}-${BUILD_NUMBER} 
         '''
       }
     }
@@ -154,33 +163,23 @@ pipeline {
       }
     }
 
-    stage ('Deploy app - DEV/STG') {
+    stage ('Deploy app - PRD') {
       when { 
         tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
       }
+      input {
+        message 'Approve to deploy PRD?'
+        ok "Done"
+        parameters {
+          booleanParam(name: 'APPROVED', defaultValue: false, description: 'Are you approve to deploy Application on PRD environment?')
+        }
+      }
       steps {
         sh '''
-          echo "devploy"
+          docker stop color-app-prd || true && docker rm color-app-prd || true
+          docker run -p 30800:80 --restart always -d --name color-app-prd ${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}
         '''
       }
     }
-    // stage ('Deploy app - DEV/STG') {
-    //   when { 
-    //     tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
-    //   }
-    //   // input {
-    //   //   message 'Approve to deploy PRD?'
-    //   //   ok "Done"
-    //   //   parameters {
-    //   //     booleanParam(name: 'APPROVED', defaultValue: false, description: 'Are you approve to deploy Application on PRD environment?')
-    //   //   }
-    //   // }
-    //   steps {
-    //     sh '''
-    //       docker stop color-app-prd || true && docker rm color-app-prd || true
-    //       docker run -p 30080:80 --restart always -d --name color-app-prd ${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}
-    //     '''
-    //   }
-    // }
   }
 }
