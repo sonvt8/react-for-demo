@@ -39,7 +39,7 @@ pipeline {
           }
         }
 
-        stage ('') {
+        stage ('Code Testing') {
           stages {
             stage ('Install Dependencies') {
               tools {
@@ -116,20 +116,20 @@ pipeline {
       }
     }
 
-    // stage ('Deploy app - DEV/STG') {
-    //   when {
-    //     anyOf {
-    //       branch 'develop'
-    //       branch 'release'
-    //     }
-    //   }
-    //   steps {
-    //     sh '''
-    //       docker stop color-app-dev || true && docker rm color-app-dev || true
-    //       docker run -p 30080:80 --restart always -d --name color-app-dev ${DOCKER_REGISTRY_NAME}/pick-color:${BRANCH_NAME}-${BUILD_NUMBER} 
-    //     '''
-    //   }
-    // }
+    stage ('Deploy app - DEV/STG') {
+      when {
+        anyOf {
+          branch 'develop'
+          branch 'release'
+        }
+      }
+      steps {
+        sh '''
+          docker stop color-app-dev || true && docker rm color-app-dev || true
+          docker run -p 30080:80 --restart always -d --name color-app-dev ${DOCKER_REGISTRY_NAME}/pick-color:${BRANCH_NAME}-${BUILD_NUMBER} 
+        '''
+      }
+    }
     
     // stage ('Create docker images - PRD') {
     //   when { 
