@@ -158,13 +158,13 @@ pipeline {
       when { 
         tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
       }
-      input {
-        message 'Approve to deploy PRD?'
-        ok "Done"
-        parameters {
-            booleanParam(name: 'APPROVED', defaultValue: false, description: 'Are you approve to deploy Application on PRD environment?')
-        }
-      }
+      // input {
+      //   message 'Approve to deploy PRD?'
+      //   ok "Done"
+      //   parameters {
+      //     booleanParam(name: 'APPROVED', defaultValue: false, description: 'Are you approve to deploy Application on PRD environment?')
+      //   }
+      // }
       steps {
         sh '''
           docker stop color-app-prd || true && docker rm color-app-prd || true
