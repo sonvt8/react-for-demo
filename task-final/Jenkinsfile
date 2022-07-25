@@ -14,9 +14,8 @@ pipeline {
       //     label 'linux-slave'
       //   }
       // }
-      steps {
-        // sh 'ls -al'
-        def scannerHome = tool 'sonar';
+      // steps {
+        def scannerHome = tool 'sonar_scanner';
         withSonarQubeEnv('sonar') {
             sh "${scannerHome}/bin/sonar-scanner \
             -Dsonar.projectKey=color-app \
@@ -24,7 +23,7 @@ pipeline {
             -Dsonar.css.node=. \
             -Dsonar.host.url=${SONAR_HOST_URL}"
           }
-        }
+        // }
     }
 
     stage("Quality gate") {
