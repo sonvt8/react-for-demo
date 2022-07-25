@@ -165,6 +165,7 @@ pipeline {
 
     stage ('Deploy app - PRD') {
       when { 
+        beforeInput true
         tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
       }
       input {
