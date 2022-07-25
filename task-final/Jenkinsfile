@@ -19,8 +19,6 @@ pipeline {
           def scannerHome = tool 'sonar_scanner';
             withSonarQubeEnv('sonar') {
                 sh "${scannerHome}/bin/sonar-scanner \
-                    -Dsonar.projectKey=reactapp \
-                    -Dsonar.projectName=reactapp
                     -Dsonar.host.url=${SONAR_HOST_URL}"
             }
           }
