@@ -8,12 +8,12 @@ pipeline {
   stages {
 
     stage('Code Quality Check') {
-      // agent {
-      //   docker {
-      //     image 'gradle:jdk8-alpine'
-      //     label 'linux-slave'
-      //   }
-      // }
+      agent {
+        docker {
+          image 'gradle:jdk8-alpine'
+          label 'linux-slave'
+        }
+      }
       steps {
         script{
           def scannerHome = tool 'sonar_scanner';
