@@ -68,7 +68,7 @@ pipeline {
         '''
         // Push image to hub.docker.com
         sh '''
-          echo ${DOCKER_REGISTRY_PASSWORD} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin  
+          docker login -u ${DOCKER_REGISTRY_USERNAME} --password ${DOCKER_REGISTRY_PASSWORD}
           docker push "${DOCKER_REGISTRY_NAME}/pick-color:dev-${BUILD_NUMBER}"
         '''
 
@@ -97,7 +97,7 @@ pipeline {
         '''
         // Push image to hub.docker.com
         sh '''
-          echo ${DOCKER_REGISTRY_PASSWORD} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin  
+          docker login -u ${DOCKER_REGISTRY_USERNAME} --password ${DOCKER_REGISTRY_PASSWORD}
           docker push "${DOCKER_REGISTRY_NAME}/pick-color:${IMAGE_TAG}"
         '''
       }
