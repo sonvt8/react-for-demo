@@ -170,9 +170,9 @@ pipeline {
       input {
         message 'Approve to deploy PRD?'
         ok "Done"
-        parameters {
-          booleanParam(name: 'APPROVED', defaultValue: false, description: 'Are you approve to deploy Application on PRD environment?')
-        }
+        // parameters {
+        //   booleanParam(name: 'APPROVED', defaultValue: false, description: 'Are you approve to deploy Application on PRD environment?')
+        // }
       }
       steps {
         sh '''
