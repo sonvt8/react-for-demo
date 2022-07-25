@@ -15,7 +15,7 @@ pipeline {
         }
       }
       when {
-        tag "v*" 
+        tag
       }
       steps {
         script{
