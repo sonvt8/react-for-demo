@@ -16,12 +16,7 @@ pipeline {
       }
       steps {
         withSonarQubeEnv('sonar') {
-          sh './gradlew sonarqube'
-            // sh "${scannerHome}/bin/sonar-scanner \
-            // -Dsonar.projectKey=color-app \
-            // -Dsonar.sources=. \
-            // -Dsonar.css.node=. \
-            // -Dsonar.host.url=${SONAR_HOST_URL}"
+          sh './gradlew -Dsonar.host.url=${SONAR_HOST_URL} sonarqube'
           }
         }
     }
