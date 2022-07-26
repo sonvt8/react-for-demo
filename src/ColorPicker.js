@@ -50,7 +50,7 @@ class ColorPicker extends Component {
 
   render() {
     return (
-      <div>
+      <div style={{ backgroundColor: 'grey' }}>
         <ColorBox {...this.state} />
         <LabeledSlider
           label="Red"
