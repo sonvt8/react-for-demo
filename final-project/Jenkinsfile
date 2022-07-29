@@ -91,8 +91,8 @@ pipeline {
       }
     }
 
-    stage ('Create and run docker images dev') {
-      agent { label 'ubuntu-slave-vps1' }
+    stage ('Create images dev') {
+      // agent { label 'ubuntu-slave-vps1' }
       when {
         branch 'develop'
       }
@@ -111,9 +111,16 @@ pipeline {
           docker push "${DOCKER_REGISTRY_NAME}/pick-color:develop-${BUILD_NUMBER}"
         '''
       }
+    }
 
+    stage ('run docker image dev') {
+      // agent { label 'ubuntu-slave-vps1' }
+      when {
+        branch 'develop'
+      }
       steps {
         sh '''
+          echo "Starting to run docker image on dev env"
           docker stop color-app-dev || true && docker rm color-app-dev || true
           docker run -p 30080:80 --restart always -d --name color-app-dev ${DOCKER_REGISTRY_NAME}/pick-color:develop-${BUILD_NUMBER} 
         '''
@@ -121,7 +128,7 @@ pipeline {
     }
 
     stage ('Create and run docker images stg') {
-      agent { label 'ubuntu-slave-vps1' }
+      // agent { label 'ubuntu-slave-vps1' }
       when {
         branch 'release'
       }
@@ -140,9 +147,16 @@ pipeline {
           docker push "${DOCKER_REGISTRY_NAME}/pick-color:stg-${BUILD_NUMBER}"
         '''
       }
+    }
 
+    stage ('run docker image stg') {
+      // agent { label 'ubuntu-slave-vps1' }
+      when {
+        branch 'develop'
+      }
       steps {
         sh '''
+          echo "Starting to run docker image on stg env"
           docker stop color-app-dev || true && docker rm color-app-dev || true
           docker run -p 30090:80 --restart always -d --name color-app-dev ${DOCKER_REGISTRY_NAME}/pick-color:stg-${BUILD_NUMBER} 
         '''
@@ -150,7 +164,7 @@ pipeline {
     }
 
     stage ('Create and run docker images prd') {
-      agent { label 'ubuntu-slave-vps1' }
+      // agent { label 'ubuntu-slave-vps1' }
       when {
         tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
       }
@@ -176,11 +190,18 @@ pipeline {
           docker push "${DOCKER_REGISTRY_NAME}/pick-color:${IMAGE_TAG}"
         '''
       }
+    }
 
+    stage ('run docker image stg') {
+      // agent { label 'ubuntu-slave-vps1' }
+      when {
+        branch 'develop'
+      }
       steps {
         sh '''
+          echo "Starting to run docker image on production env"
           docker stop color-app-dev || true && docker rm color-app-dev || true
-          docker run -p 30100:80 --restart always -d --name color-app-dev ${DOCKER_REGISTRY_NAME}/pick-color:${IMAGE_TAG}" 
+          docker run -p 30100:80 --restart always -d --name color-app-dev ${DOCKER_REGISTRY_NAME}/pick-color:${IMAGE_TAG}"  
         '''
       }
     }
