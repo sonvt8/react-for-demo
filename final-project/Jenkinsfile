@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'linux-slave' }
+  agent { label 'ubuntu-slave-vps1' }
   environment {
     DOCKER_REGISTRY_NAME        = credentials('DOCKER_REGISTRY_NAME')
     DOCKER_REGISTRY_USERNAME    = credentials('DOCKER_REGISTRY_USERNAME')
@@ -15,7 +15,7 @@ pipeline {
               agent {
                 docker {
                   image 'gradle:jdk8-alpine'
-                  label 'linux-slave'
+                  label 'ubuntu-slave-vps1'
                 }
               }
 
