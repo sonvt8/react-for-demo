@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'ubuntu-slave-vps1' }
+  agent { label 'linux-slave' }
   environment {
     DOCKER_REGISTRY_NAME        = credentials('DOCKER_REGISTRY_NAME')
     DOCKER_REGISTRY_USERNAME    = credentials('DOCKER_REGISTRY_USERNAME')
