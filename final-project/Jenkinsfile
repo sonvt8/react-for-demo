@@ -127,7 +127,7 @@ pipeline {
       }
     }
 
-    stage ('Create and run docker images stg') {
+    stage ('Create docker images stg') {
       // agent { label 'ubuntu-slave-vps1' }
       when {
         branch 'release'
@@ -163,7 +163,7 @@ pipeline {
       }
     }
 
-    stage ('Create and run docker images prd') {
+    stage ('Create images prd') {
       // agent { label 'ubuntu-slave-vps1' }
       when {
         tag pattern: "^v(\\d+(?:\\.\\d+)*)\$", comparator: "REGEXP"
@@ -192,7 +192,7 @@ pipeline {
       }
     }
 
-    stage ('run docker image stg') {
+    stage ('run docker image prd') {
       // agent { label 'ubuntu-slave-vps1' }
       when {
         branch 'develop'
