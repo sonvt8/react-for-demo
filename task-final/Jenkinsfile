@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'linux-slave' }
+  agent { label 'ubuntu-slave-vps1' }
   environment {
     DOCKER_REGISTRY_NAME        = credentials('DOCKER_REGISTRY_NAME')
     DOCKER_REGISTRY_USERNAME    = credentials('DOCKER_REGISTRY_USERNAME')
@@ -15,7 +15,7 @@ pipeline {
               agent {
                 docker {
                   image 'gradle:jdk8-alpine'
-                  label 'linux-slave'
+                  label 'ubuntu-slave-vps1'
                 }
               }
 
@@ -178,7 +178,7 @@ pipeline {
       steps {
         sh '''
           docker stop color-app-prd || true && docker rm color-app-prd || true
-          docker run -p 30800:80 --restart always -d --name color-app-prd ${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}
+          docker run -p 30100:80 --restart always -d --name color-app-prd ${DOCKER_REGISTRY_NAME}/pick-color:${TAG_NAME}
         '''
       }
     }
